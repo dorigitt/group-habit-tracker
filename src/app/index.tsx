@@ -1,98 +1,55 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
+import { Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Button } from '@/components/ui';
+import { colors } from '@/lib/theme';
+import { isConfigured } from '@/lib/supabase';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+export default function Welcome() {
+  const router = useRouter();
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg, padding: 24, justifyContent: 'space-between', overflow: 'hidden' }}>
+      {/* soft decorative circles */}
+      <View style={{ position: 'absolute', top: -80, right: -70, width: 240, height: 240, borderRadius: 120, backgroundColor: colors.primarySoft }} />
+      <View style={{ position: 'absolute', top: 120, left: -90, width: 160, height: 160, borderRadius: 80, backgroundColor: '#E6F6EC' }} />
+
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', gap: 18 }}>
+        <View style={{
+          width: 100, height: 100, borderRadius: 30, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center',
+          shadowColor: colors.primary, shadowOpacity: 0.35, shadowRadius: 20, shadowOffset: { width: 0, height: 10 }, elevation: 6,
+        }}>
+          <Ionicons name="people" size={54} color="#fff" />
+        </View>
+        <Text style={{ fontSize: 34, fontWeight: '800', color: colors.text, letterSpacing: -0.8, textAlign: 'center' }}>Group Habit Tracker</Text>
+        <Text style={{ fontSize: 17, color: colors.muted, textAlign: 'center', lineHeight: 25, paddingHorizontal: 8 }}>
+          Habits stick when people count on you. Build them with friends, check in every day, and agree on fair, friendly
+          consequences when someone slips.
+        </Text>
+        <View style={{ gap: 12, marginTop: 10, alignSelf: 'stretch', paddingHorizontal: 16 }}>
+          {[
+            ['checkmark-circle', 'Daily check-ins with optional photo proof'],
+            ['flash', 'Strikes and agreed consequences'],
+            ['trophy', 'Leaderboards from real results'],
+          ].map(([icon, text]) => (
+            <View key={text} style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+              <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}>
+                <Ionicons name={icon as any} size={20} color={colors.primary} />
+              </View>
+              <Text style={{ fontSize: 15, color: colors.text, flex: 1 }}>{text}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
+      <View style={{ gap: 10 }}>
+        {!isConfigured && (
+          <Text style={{ color: colors.danger, textAlign: 'center' }}>
+            Supabase is not configured. Copy .env.example to .env and add your keys (see README).
+          </Text>
+        )}
+        <Button title="Get started" onPress={() => router.push('/(auth)/register')} />
+        <Button title="Log in" variant="secondary" onPress={() => router.push('/(auth)/login')} />
+      </View>
+    </SafeAreaView>
   );
 }
-
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
-  },
-});

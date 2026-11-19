@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "habit-app",
+    "name": "Group Habit Tracker",
     "slug": "habit-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "habitapp",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "ios": {
       "icon": "./assets/expo.icon"
     },
@@ -20,7 +20,7 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "output": "static",
+      "output": "single",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
@@ -32,10 +32,17 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
+      ],
+      "expo-status-bar",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Choose a proof photo for your habit check-in.",
+          "cameraPermission": "Take a proof photo for your habit check-in."
+        }
       ]
     ],
     "experiments": {
-      "typedRoutes": true,
       "reactCompiler": true
     }
   }
